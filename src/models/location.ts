@@ -1,4 +1,5 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToMany, ManyToOne} from "typeorm";
+import Photo from "./photo";
 
 @Entity("locations")
 export default class Location {
@@ -38,4 +39,8 @@ export default class Location {
 
     @Column()
     slug: string;
+
+    @OneToMany(() => Photo, photo => photo.location)
+    @JoinColumn({name: "id"})
+    photos: Photo[]
 }

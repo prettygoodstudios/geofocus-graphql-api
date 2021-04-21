@@ -7,8 +7,24 @@ const typeDefs = gql`
         longitude: Float,
         city: String,
         state: String,
-        address: String
+        address: String,
+        photos: [Photo],
+        slug: String
     }
+
+    type Photo {
+        caption: String,
+        views: Int,
+        url: String
+        location: Location,
+        slug: String,
+        width: Float,
+        height: Int,
+        zoom: Float,
+        offsetX: Int,
+        offsetY: Int
+    }
+
     type Query {
         locations: [Location]
     }

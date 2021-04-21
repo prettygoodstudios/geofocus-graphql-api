@@ -5,6 +5,7 @@ import typeDefs from "./apiSchema";
 import {locations} from "./resolvers/locations";
 import Location from "./models/location";
 import { connection } from "./db";
+import Photo from "./models/photo";
 
 const main = async () => {
     const orm = await connection();
@@ -14,6 +15,10 @@ const main = async () => {
             locations: () => locations(orm)
         }
     }
+
+    
+
+    console.log(result);
     
     const server = new ApolloServer({ typeDefs, resolvers });
     
