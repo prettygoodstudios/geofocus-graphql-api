@@ -36,7 +36,8 @@ const typeDefs = gql`
     }
 
     type Query {
-        locations: [Location]
+        locations: [Location],
+        location(slug: String): Location,
         photo(slug: String): Photo
     }
 `;

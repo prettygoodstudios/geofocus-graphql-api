@@ -1,8 +1,9 @@
 import {ApolloServer} from "apollo-server";
 
 import typeDefs from "./apiSchema";
-import {locations} from "./resolvers/locations";
 import { connection } from "./db";
+
+import {locations, location} from "./resolvers/locations";
 import { photo } from "./resolvers/photos";
 
 const main = async () => {
@@ -11,6 +12,7 @@ const main = async () => {
     const resolvers = {
         Query: {
             locations: () => locations(orm),
+            location: (_: any, {slug} : {slug: string}) => location(orm, slug),
             photo: (_: any, {slug} : {slug: string}) => photo(orm, slug)
         }
     }
