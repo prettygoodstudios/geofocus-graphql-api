@@ -2,7 +2,7 @@ import {gql} from "apollo-server";
 
 const typeDefs = gql`
     type Location {
-        name: String, 
+        title: String, 
         latitude: Float,
         longitude: Float,
         city: String,

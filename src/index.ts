@@ -8,13 +8,10 @@ import { connection } from "./db";
 
 const main = async () => {
     const orm = await connection();
-
-    const locos = await orm.manager.find(Location);
-    console.log(locos);
     
     const resolvers = {
         Query: {
-            locations
+            locations: () => locations(orm)
         }
     }
     
