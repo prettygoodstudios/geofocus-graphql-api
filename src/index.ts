@@ -3,13 +3,15 @@ import {ApolloServer} from "apollo-server";
 import typeDefs from "./apiSchema";
 import {locations} from "./resolvers/locations";
 import { connection } from "./db";
+import { photo } from "./resolvers/photos";
 
 const main = async () => {
     const orm = await connection();
     
     const resolvers = {
         Query: {
-            locations: () => locations(orm)
+            locations: () => locations(orm),
+            photo: (parent: Object, {slug} : {slug: string}) => photo(orm, slug)
         }
     }
 
