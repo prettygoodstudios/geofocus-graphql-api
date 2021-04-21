@@ -15,7 +15,7 @@ const typeDefs = gql`
     type Photo {
         caption: String,
         views: Int,
-        url: String
+        img_url: String
         location: Location,
         slug: String,
         width: Float,
