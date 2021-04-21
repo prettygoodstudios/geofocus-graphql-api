@@ -32,7 +32,8 @@ const typeDefs = gql`
         profile_img: String,
         zoom: Float, 
         height: Float,
-        width: Float
+        width: Float,
+        bio: String
     }
 
     type Query {
