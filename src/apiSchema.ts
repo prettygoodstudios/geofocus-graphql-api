@@ -22,7 +22,17 @@ const typeDefs = gql`
         height: Int,
         zoom: Float,
         offsetX: Int,
-        offsetY: Int
+        offsetY: Int,
+        user: Profile
+    }
+
+    type Profile {
+        slug: String,
+        display: String,
+        profile_img: String,
+        zoom: Float, 
+        height: Float,
+        width: Float
     }
 
     type Query {

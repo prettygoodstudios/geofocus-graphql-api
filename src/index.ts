@@ -11,7 +11,7 @@ const main = async () => {
     const resolvers = {
         Query: {
             locations: () => locations(orm),
-            photo: (parent: Object, {slug} : {slug: string}) => photo(orm, slug)
+            photo: (_: any, {slug} : {slug: string}) => photo(orm, slug)
         }
     }
 

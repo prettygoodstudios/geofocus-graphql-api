@@ -5,10 +5,14 @@ export const photo = async (orm: Connection, slug: string): Promise<Photo|null> 
     const photos = await orm
         .manager
         .connection
-        .createQueryBuilder()
-        .select()
-        .from(Photo, "photos")
-        .where("slug = :slug", {slug})
-        .execute();
+        .manager
+        .getRepository(Photo)
+        .find({
+            where: {
+                slug
+            },
+            relations: ["user"]
+        });
+        
     return photos.length > 0 ? photos[0] : null;
 }

@@ -1,5 +1,6 @@
 import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn} from "typeorm";
 import Location from "./location";
+import User from "./user";
 
 @Entity("photos")
 export default class Photo {
@@ -37,4 +38,10 @@ export default class Photo {
 
     @Column()
     offsetY: number 
+
+    @ManyToOne(() => User, user => user.photos)
+    @JoinColumn({
+        name: "user_id"
+    })
+    user: User
 }
