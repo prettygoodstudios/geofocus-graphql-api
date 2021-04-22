@@ -1,4 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn} from "typeorm";
+import { getProfileURL } from "../config";
 import Photo from "./photo";
 
 @Entity("users")
@@ -42,5 +43,9 @@ export default class User {
         name: "id"
     })
     photos: Photo[]
+
+    profile_url(){
+        return getProfileURL(this.id, this.profile_img);
+    }
 
 }

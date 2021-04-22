@@ -15,7 +15,6 @@ const typeDefs = gql`
     type Photo {
         caption: String,
         views: Int,
-        img_url: String
         location: Location,
         slug: String,
         width: Float,
@@ -23,17 +22,18 @@ const typeDefs = gql`
         zoom: Float,
         offsetX: Int,
         offsetY: Int,
-        user: Profile
+        user: Profile,
+        url: String
     }
 
     type Profile {
         slug: String,
         display: String,
-        profile_img: String,
         zoom: Float, 
         height: Float,
         width: Float,
-        bio: String
+        bio: String,
+        profile_url: String
     }
 
     type Query {

@@ -1,4 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn} from "typeorm";
+import { getPhotoURL } from "../config";
 import Location from "./location";
 import User from "./user";
 
@@ -44,4 +45,8 @@ export default class Photo {
         name: "user_id"
     })
     user: User
+
+    url(){
+        return getPhotoURL(this.id, this.img_url);
+    }
 }
