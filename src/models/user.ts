@@ -76,7 +76,10 @@ export class UserRepository extends Repository<User> {
                 where:{
                     user: In(users.map(u => u.id))
                 },
-                relations: ["user"]
+                relations: ["user"],
+                order: {
+                    views: "DESC"
+                }
             });        
 
         const photoMap: Map<number, Photo[]> = new Map();
@@ -84,6 +87,8 @@ export class UserRepository extends Repository<User> {
         photos.forEach(photo => {
             if(!photoMap.get(photo.user.id)?.push(photo)){
                 photoMap.set(photo.user.id, [photo]);
+            } else if(photoMap.get(photo.user.id)!.length > 6) {
+                photoMap.get(photo.user.id)!.pop();
             }
         });
 
