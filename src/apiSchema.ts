@@ -33,13 +33,15 @@ const typeDefs = gql`
         height: Float,
         width: Float,
         bio: String,
-        profile_url: String
+        profile_url: String,
+        photos: [Photo]
     }
 
     type Query {
         locations: [Location],
         location(slug: String): Location,
-        photo(slug: String): Photo
+        photo(slug: String): Photo, 
+        users: [Profile]
     }
 `;
 
