@@ -1,7 +1,8 @@
 import { Connection } from "typeorm";
 import Location from "../models/location";
+import { PublicSlugResolver, StandardResolver } from "../types";
 
-export const locations = async (orm: Connection): Promise<Location[]> => {  
+export const locations: StandardResolver<Promise<Location[]>> = async (parent, args, {orm}) => {  
     return await orm
         .manager
         .connection
@@ -11,7 +12,7 @@ export const locations = async (orm: Connection): Promise<Location[]> => {
         });
 }
 
-export const location = async (orm: Connection, slug: string): Promise<Location|null> => {
+export const location: PublicSlugResolver<Promise<Location|null>> = async (parent, {slug}, {orm}) => {
     const locations = await orm    
         .manager
         .connection

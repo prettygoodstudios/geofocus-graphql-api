@@ -1,7 +1,8 @@
 import { Connection } from "typeorm";
 import Photo from "../models/photo";
+import { PublicSlugResolver } from "../types";
 
-export const photo = async (orm: Connection, slug: string): Promise<Photo|null> => {    
+export const photo: PublicSlugResolver<Promise<Photo|null>> = async (parent, {slug}, {orm})  => {    
     const photos = await orm
         .manager
         .connection

@@ -1,7 +1,8 @@
 import { Connection, In } from "typeorm";
 import User, { UserRepository } from "../models/user";
+import { PublicSlugResolver, StandardResolver } from "../types";
 
-export const topUsers = async (orm: Connection): Promise<User[]> => {    
+export const topUsers: StandardResolver<Promise<User[]>> = async (parent, {slug}, {orm})  => {    
 
     const users: User[] = await orm 
         .manager
@@ -11,7 +12,7 @@ export const topUsers = async (orm: Connection): Promise<User[]> => {
     return users;
 }
 
-export const user = async (orm: Connection, slug: string): Promise<User> => {
+export const user: PublicSlugResolver<Promise<User>> = async (parent, {slug}, {orm}) => {
 
     const user: User|undefined = await orm
         .manager 
@@ -23,5 +24,6 @@ export const user = async (orm: Connection, slug: string): Promise<User> => {
             },
             relations: ["photos", "photos.location", "photos.user"]
         });
+
     return user!;
 }
