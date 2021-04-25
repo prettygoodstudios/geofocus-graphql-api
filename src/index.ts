@@ -5,7 +5,7 @@ import { connection } from "./db";
 
 import {locations, location} from "./resolvers/locations";
 import { photo } from "./resolvers/photos";
-import {users} from "./resolvers/users";
+import {topUsers, user} from "./resolvers/users";
 
 const main = async () => {
     const orm = await connection();
@@ -15,7 +15,8 @@ const main = async () => {
             locations: () => locations(orm),
             location: (_: any, {slug} : {slug: string}) => location(orm, slug),
             photo: (_: any, {slug} : {slug: string}) => photo(orm, slug),
-            users: () => users(orm)
+            topUsers: () => topUsers(orm),
+            user: (_: any, {slug} : {slug: string}) => user(orm, slug)
         }
     }
 

@@ -33,6 +33,8 @@ const typeDefs = gql`
         height: Float,
         width: Float,
         bio: String,
+        offsetX: Float,
+        offsetY: Float,
         profile_url: String,
         photos: [Photo]
     }
@@ -41,7 +43,8 @@ const typeDefs = gql`
         locations: [Location],
         location(slug: String): Location,
         photo(slug: String): Photo, 
-        users: [Profile]
+        topUsers: [Profile],
+        user(slug: String): Profile
     }
 `;
 

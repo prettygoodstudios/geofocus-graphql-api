@@ -76,7 +76,7 @@ export class UserRepository extends Repository<User> {
                 where:{
                     user: In(users.map(u => u.id))
                 },
-                relations: ["user"],
+                relations: ["user", "location"],
                 order: {
                     views: "DESC"
                 }

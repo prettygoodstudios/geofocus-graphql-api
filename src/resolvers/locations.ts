@@ -7,7 +7,7 @@ export const locations = async (orm: Connection): Promise<Location[]> => {
         .connection
         .getRepository(Location)
         .find({
-            relations: ["photos", "photos.user"]
+            relations: ["photos", "photos.user", "photos.location"]
         });
 }
 
@@ -20,7 +20,7 @@ export const location = async (orm: Connection, slug: string): Promise<Location|
             where: {
                 slug
             },
-            relations: ["photos", "photos.user"]
+            relations: ["photos", "photos.user", "photos.location"]
         });
     return locations.length > 0 ? locations[0] : null;
 }

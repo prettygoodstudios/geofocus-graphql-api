@@ -11,7 +11,7 @@ export const photo = async (orm: Connection, slug: string): Promise<Photo|null> 
             where: {
                 slug
             },
-            relations: ["user"]
+            relations: ["user", "location"]
         });
         
     return photos.length > 0 ? photos[0] : null;
