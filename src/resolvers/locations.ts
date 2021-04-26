@@ -5,6 +5,7 @@ import slugify from "slugify";
 import { validate } from "class-validator";
 import { ApolloError } from "apollo-server-express";
 import { humanReadableList } from "../helpers";
+import { AuthError } from "./auth";
 
 export const locations: StandardResolver<Promise<Location[]>> = async (parent, args, {orm}) => {  
     return await orm
@@ -70,7 +71,6 @@ export const createLocation: StandardResolver<Promise<Location|null>> = async (p
 
         const errors = await validate(location);
         const errorMessage = `The following inputs failed validation ${humanReadableList(errors.map(e => e.property))}.`;
-        console.log(errors);
         if (errors.length > 0){
             throw new ApolloError(errorMessage, LOCATION_VALIDATION);
         }
@@ -83,5 +83,7 @@ export const createLocation: StandardResolver<Promise<Location|null>> = async (p
 
         return location;
     }
+
+    AuthError("You must be authenticated to perform this action.");
     return null;
 }
