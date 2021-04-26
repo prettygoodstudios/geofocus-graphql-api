@@ -1,11 +1,12 @@
 import { geocoder } from "../config";
 import Location from "../models/location";
-import { PublicSlugResolver, StandardResolver } from "../types";
+import { LocationResolver, PublicSlugResolver, StandardResolver } from "../types";
 import slugify from "slugify";
 import { validate } from "class-validator";
 import { ApolloError } from "apollo-server-express";
 import { humanReadableList } from "../helpers";
 import { AuthError } from "./auth";
+import { Connection } from "typeorm";
 
 export const locations: StandardResolver<Promise<Location[]>> = async (parent, args, {orm}) => {  
     return await orm
@@ -33,57 +34,87 @@ export const location: PublicSlugResolver<Promise<Location|null>> = async (paren
 
 const LOCATION_VALIDATION = 'LOCATION_VALIDATION';
 
-export const createLocation: StandardResolver<Promise<Location|null>> = async (parent, {title, address, city, state, country}: {title: string, address: string, city: string, state: string, country: string}, {orm, req}) => {
-    if(req.userId){
-        const location = new Location();
-        location.address = address;
-        location.city = city;
-        location.state = state;
-        location.country = country;
-        location.title = title;
-        location.user_id = req.userId;
-        location.created_at = new Date();
-        location.updated_at = new Date();
+const saveLocation = async (location: Location, orm: Connection, {title, address, city, state, country, userId} : {title: string, address: string, city: string, state: string, country: string, userId: number}) => {
+    location.address = address;
+    location.city = city;
+    location.state = state;
+    location.country = country;
+    location.title = title;
+    location.user_id = userId;
+    location.created_at = new Date();
+    location.updated_at = new Date();
 
-        const coords = await geocoder.geocode(location.humanReadableAddress());
+    const coords = await geocoder.geocode(location.humanReadableAddress());
 
-        coords.sort((a, b) => {
-            const confidence1: number = a!.extra!.confidence!;
-            const confidence2: number = b!.extra!.confidence!;
-            return confidence2 - confidence1;
-        });
+    coords.sort((a, b) => {
+        const confidence1: number = a!.extra!.confidence!;
+        const confidence2: number = b!.extra!.confidence!;
+        return confidence2 - confidence1;
+    });
 
-        if (coords.length == 0){
-            throw new ApolloError("Could not find location.", LOCATION_VALIDATION);
-        }
-
-        const coord = coords[0];
-
-        if(coord!.extra!.confidence! < 7){
-            throw new ApolloError("Could not find location.", LOCATION_VALIDATION);
-        }
-
-        location.latitude = coord.latitude!.valueOf();
-        location.longitude = coord.longitude!.valueOf();
-        location.slug = slugify(location.humanReadableAddress(), {
-            lower: true
-        });
-
-        const errors = await validate(location);
-        const errorMessage = `The following inputs failed validation ${humanReadableList(errors.map(e => e.property))}.`;
-        if (errors.length > 0){
-            throw new ApolloError(errorMessage, LOCATION_VALIDATION);
-        }
-
-        await orm 
-            .manager 
-            .connection 
-            .getRepository(Location)
-            .save(location);
-
-        return location;
+    if (coords.length == 0){
+        throw new ApolloError("Could not find location.", LOCATION_VALIDATION);
     }
 
+    const coord = coords[0];
+
+    if(coord!.extra!.confidence! < 7){
+        throw new ApolloError("Could not find location.", LOCATION_VALIDATION);
+    }
+
+    location.latitude = coord.latitude!.valueOf();
+    location.longitude = coord.longitude!.valueOf();
+    location.slug = slugify(location.humanReadableAddress(), {
+        lower: true
+    });
+
+    const errors = await validate(location);
+    const errorMessage = `The following inputs failed validation ${humanReadableList(errors.map(e => e.property))}.`;
+    if (errors.length > 0){
+        throw new ApolloError(errorMessage, LOCATION_VALIDATION);
+    }
+
+    await orm 
+        .manager 
+        .connection 
+        .getRepository(Location)
+        .save(location);
+
+    return location;
+}
+
+export const createLocation: LocationResolver = async (parent, {title, address, city, state, country}, {orm, req}) => {
+    if(req.userId){
+        const location = new Location();
+        return saveLocation(location, orm, {title, address, city, state, country, userId: req.userId});
+    }
+
+    AuthError("You must be authenticated to perform this action.");
+    return null;
+}
+
+export const updateLocation: LocationResolver = async (parent, {title, address, city, state, country, slug}, {orm, req}) => {
+    if(req.userId) {
+
+        try {
+            const location = await orm 
+                .manager 
+                .connection 
+                .getRepository(Location)
+                .findOneOrFail({
+                    where: {
+                        slug
+                    }
+                });
+                if(location.user_id !== req.userId){
+                    AuthError("You don't have access to this location.");
+                    return null;
+                }
+                return saveLocation(location, orm, {title, address, city, state, country, userId: location.user_id});
+        } catch {
+            throw new ApolloError("Could not find the specified location.", LOCATION_VALIDATION);
+        }
+    }
     AuthError("You must be authenticated to perform this action.");
     return null;
 }
