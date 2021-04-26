@@ -19,11 +19,6 @@ export const login: LoginResolver = async (parent, {email, password}, {orm, res}
     
         
     if(await compare(password, user.encrypted_password)){
-        const tokenObject = {
-            userId: user.id,
-            userEmail: user.email,
-            userSlug: user.slug
-        }
         generateTokens(user, res);
         return user;
     }

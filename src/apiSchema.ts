@@ -64,7 +64,8 @@ const typeDefs = gql`
 
     type Mutation {
         login(email: String, password: String): Profile,
-        logout: Boolean
+        logout: Boolean,
+        createLocation(title: String, address: String, city: String, state: String, country: String): Location
     }
 `;
 
