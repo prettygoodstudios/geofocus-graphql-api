@@ -10,14 +10,17 @@ export default class Location {
 
     @Column()
     @Length(2, 255)
+    @IsNotEmpty()
     title: string;
 
     @Column()
     @Length(2, 255)
+    @IsNotEmpty()
     city: string;
 
     @Column()
     @Length(2, 255)
+    @IsNotEmpty()
     state: string;
 
     @Column()
@@ -34,6 +37,7 @@ export default class Location {
 
     @Column()
     @Length(2, 255)
+    @IsNotEmpty()
     address: string;
 
     @Column()

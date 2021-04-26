@@ -3,6 +3,8 @@ import Location from "../models/location";
 import { PublicSlugResolver, StandardResolver } from "../types";
 import slugify from "slugify";
 import { validate } from "class-validator";
+import { ApolloError } from "apollo-server-express";
+import { humanReadableList } from "../helpers";
 
 export const locations: StandardResolver<Promise<Location[]>> = async (parent, args, {orm}) => {  
     return await orm
@@ -28,6 +30,8 @@ export const location: PublicSlugResolver<Promise<Location|null>> = async (paren
     return locations.length > 0 ? locations[0] : null;
 }
 
+const LOCATION_VALIDATION = 'LOCATION_VALIDATION';
+
 export const createLocation: StandardResolver<Promise<Location|null>> = async (parent, {title, address, city, state, country}: {title: string, address: string, city: string, state: string, country: string}, {orm, req}) => {
     if(req.userId){
         const location = new Location();
@@ -49,13 +53,13 @@ export const createLocation: StandardResolver<Promise<Location|null>> = async (p
         });
 
         if (coords.length == 0){
-            return null;
+            throw new ApolloError("Could not find location.", LOCATION_VALIDATION);
         }
 
         const coord = coords[0];
 
         if(coord!.extra!.confidence! < 7){
-            return null;
+            throw new ApolloError("Could not find location.", LOCATION_VALIDATION);
         }
 
         location.latitude = coord.latitude!.valueOf();
@@ -65,9 +69,10 @@ export const createLocation: StandardResolver<Promise<Location|null>> = async (p
         });
 
         const errors = await validate(location);
-
+        const errorMessage = `The following inputs failed validation ${humanReadableList(errors.map(e => e.property))}.`;
+        console.log(errors);
         if (errors.length > 0){
-            return null;
+            throw new ApolloError(errorMessage, LOCATION_VALIDATION);
         }
 
         await orm 
