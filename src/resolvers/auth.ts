@@ -1,8 +1,7 @@
 import { LoginResolver } from "../types";
 import {compare} from "bcrypt";
 import User from "../models/user";
-import {sign} from "jsonwebtoken";
-import { SECRET } from "../config";
+import { generateTokens } from "../auth";
 
 
 export const login: LoginResolver = async (parent, {email, password}, {orm, res}) => {
@@ -24,17 +23,7 @@ export const login: LoginResolver = async (parent, {email, password}, {orm, res}
             userEmail: user.email,
             userSlug: user.slug
         }
-    
-        const refresh = sign(tokenObject, SECRET, {
-            expiresIn: "7d"
-        });
-    
-        const auth = sign(tokenObject, SECRET, {
-            expiresIn: "15min"
-        });
-        
-        res.cookie("refresh-token", refresh);
-        res.cookie("auth-token", auth);
+        generateTokens(user, res);
         return user;
     }
 

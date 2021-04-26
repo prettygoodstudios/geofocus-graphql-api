@@ -12,6 +12,8 @@ import * as express from "express";
 import * as cookieParser from "cookie-parser";
 import { verify } from "jsonwebtoken";
 import { SECRET } from "./config";
+import { generateTokens } from "./auth";
+import User from "./models/user";
 
 const main = async () => {
     const orm = await connection();
@@ -48,11 +50,24 @@ const main = async () => {
     app.use((req: any, res, next) => {
         const accessToken = req.cookies['auth-token'];
         const refreshToken = req.cookies['refresh-token'];
+        if(!accessToken || !refreshToken) {
+            return next();
+        }
         try {
             const userData: any = verify(accessToken, SECRET);
             req.userId = userData.userId;
+            return next();
         } catch {
-
+            
+        }
+        try {
+            const userData: any = verify(refreshToken, SECRET);
+            req.userId = userData.userId;
+            generateTokens({
+                id: userData.userId
+            } as User, res);
+        } catch {
+            return next();
         }
         next();
     });
