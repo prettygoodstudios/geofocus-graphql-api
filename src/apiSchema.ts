@@ -59,8 +59,11 @@ const typeDefs = gql`
         photo(slug: String): Photo, 
         topUsers: [Profile],
         user(slug: String): Profile,
-        login(email: String, password: String): Profile,
         me: PrivateUserData
+    }
+
+    type Mutation {
+        login(email: String, password: String): Profile
     }
 `;
 

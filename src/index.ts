@@ -14,6 +14,7 @@ import { verify } from "jsonwebtoken";
 import { SECRET } from "./config";
 import { generateTokens } from "./auth";
 import User from "./models/user";
+import * as cors from "cors";
 
 const main = async () => {
     const orm = await connection();
@@ -25,8 +26,10 @@ const main = async () => {
             photo,
             topUsers,
             user,
-            login,
             me
+        },
+        Mutation: {
+            login
         }
     }
 
@@ -44,6 +47,11 @@ const main = async () => {
             }
         }
     });
+
+    app.use(cors({
+        origin: 'http://localhost:3030',
+        credentials: true // <-- REQUIRED backend setting
+    }));
 
     app.use(cookieParser());
 
@@ -72,7 +80,7 @@ const main = async () => {
         next();
     });
 
-    server.applyMiddleware({ app });
+    server.applyMiddleware({ app, cors: false });
 
     
     
