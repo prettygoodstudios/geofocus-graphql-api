@@ -50,6 +50,9 @@ export default class User {
         return getProfileURL(this.id, this.profile_img);
     }
 
+    @Column()
+    encrypted_password: string
+
     views: number
 
 }

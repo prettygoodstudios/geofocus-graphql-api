@@ -1,4 +1,3 @@
-import { Connection } from "typeorm";
 import Location from "../models/location";
 import { PublicSlugResolver, StandardResolver } from "../types";
 

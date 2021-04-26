@@ -1,12 +1,17 @@
-import {ApolloServer} from "apollo-server";
+import {ApolloServer} from "apollo-server-express";
 
 import typeDefs from "./apiSchema";
 import { connection } from "./db";
 
 import {locations, location} from "./resolvers/locations";
 import { photo } from "./resolvers/photos";
-import {topUsers, user} from "./resolvers/users";
+import {topUsers, user, me} from "./resolvers/users";
 import { ApolloContext } from "./types";
+import { login } from "./resolvers/auth";
+import * as express from "express";
+import * as cookieParser from "cookie-parser";
+import { verify } from "jsonwebtoken";
+import { SECRET } from "./config";
 
 const main = async () => {
     const orm = await connection();
@@ -17,24 +22,48 @@ const main = async () => {
             location,
             photo,
             topUsers,
-            user
+            user,
+            login,
+            me
         }
     }
+
+    const app = express();
 
     
     const server = new ApolloServer({ 
         typeDefs, 
         resolvers,
-        context: ({req}): ApolloContext => {
+        context: ({req, res}): ApolloContext => {
             return {
-                orm
+                orm,
+                req,
+                res
             }
         }
     });
+
+    app.use(cookieParser());
+
+    app.use((req: any, res, next) => {
+        const accessToken = req.cookies['auth-token'];
+        const refreshToken = req.cookies['refresh-token'];
+        try {
+            const userData: any = verify(accessToken, SECRET);
+            req.userId = userData.userId;
+        } catch {
+
+        }
+        next();
+    });
+
+    server.applyMiddleware({ app });
+
+    
     
     // The `listen` method launches a web server.
-    server.listen().then(({ url }) => {
-      console.log(`🚀  Server ready at ${url}`);
+    app.listen({port: 4000}, () => {
+      console.log(`🚀  Server ready`);
     });
 }
 

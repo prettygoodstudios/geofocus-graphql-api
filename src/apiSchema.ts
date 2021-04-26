@@ -39,12 +39,28 @@ const typeDefs = gql`
         photos: [Photo]
     }
 
+    type PrivateUserData {
+        slug: String,
+        display: String,
+        zoom: Float, 
+        height: Float,
+        width: Float,
+        bio: String,
+        offsetX: Float,
+        offsetY: Float,
+        profile_url: String,
+        photos: [Photo],
+        email: String
+    }
+
     type Query {
         locations: [Location],
         location(slug: String): Location,
         photo(slug: String): Photo, 
         topUsers: [Profile],
-        user(slug: String): Profile
+        user(slug: String): Profile,
+        login(email: String, password: String): Profile,
+        me: PrivateUserData
     }
 `;
 
