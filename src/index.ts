@@ -7,7 +7,7 @@ import {locations, location} from "./resolvers/locations";
 import { photo } from "./resolvers/photos";
 import {topUsers, user, me} from "./resolvers/users";
 import { ApolloContext } from "./types";
-import { login } from "./resolvers/auth";
+import { login, logout } from "./resolvers/auth";
 import * as express from "express";
 import * as cookieParser from "cookie-parser";
 import { verify } from "jsonwebtoken";
@@ -29,7 +29,8 @@ const main = async () => {
             me
         },
         Mutation: {
-            login
+            login,
+            logout
         }
     }
 

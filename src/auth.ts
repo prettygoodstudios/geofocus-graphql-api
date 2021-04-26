@@ -21,3 +21,8 @@ export const generateTokens = (user: User, res: any) => {
     res.cookie("refresh-token", refresh);
     res.cookie("auth-token", auth);
 }
+
+export const clearTokens = (res: any) => {
+    res.cookie("refresh-token", "");
+    res.cookie("auth-token", "");
+}

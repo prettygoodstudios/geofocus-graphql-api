@@ -1,7 +1,7 @@
-import { LoginResolver } from "../types";
+import { LoginResolver, StandardResolver } from "../types";
 import {compare} from "bcrypt";
 import User from "../models/user";
-import { generateTokens } from "../auth";
+import { clearTokens, generateTokens } from "../auth";
 
 
 export const login: LoginResolver = async (parent, {email, password}, {orm, res}) => {
@@ -28,4 +28,8 @@ export const login: LoginResolver = async (parent, {email, password}, {orm, res}
     }
 
     return null;
+}
+
+export const logout: StandardResolver<void> = async (parent, args, {orm, res}) => {
+    clearTokens(res);
 }
