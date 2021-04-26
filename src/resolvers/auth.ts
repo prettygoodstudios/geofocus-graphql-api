@@ -12,7 +12,8 @@ export const login: LoginResolver = async (parent, {email, password}, {orm, res}
         .findOneOrFail({
             where: {
                 email
-            }
+            },
+            relations: ["photos", "photos.user", "photos.location"]
         });
 
     
