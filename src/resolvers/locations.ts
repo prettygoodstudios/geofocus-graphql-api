@@ -14,7 +14,7 @@ export const locations: StandardResolver<Promise<Location[]>> = async (parent, a
         .connection
         .getRepository(Location)
         .find({
-            relations: ["photos", "photos.user", "photos.location"]
+            relations: ["photos", "photos.user", "photos.location", "user"]
         });
 }
 
@@ -27,14 +27,14 @@ export const location: PublicSlugResolver<Promise<Location|null>> = async (paren
             where: {
                 slug
             },
-            relations: ["photos", "photos.user", "photos.location"]
+            relations: ["photos", "photos.user", "photos.location", "user"]
         });
     return locations.length > 0 ? locations[0] : null;
 }
 
 const LOCATION_VALIDATION = 'LOCATION_VALIDATION';
 
-const saveLocation = async (location: Location, orm: Connection, {title, address, city, state, country, userId} : {title: string, address: string, city: string, state: string, country: string, userId: number}) => {
+const saveLocation = async (location: Location, orm: Connection, update: boolean, {title, address, city, state, country, userId} : {title: string, address: string, city: string, state: string, country: string, userId: number}) => {
     location.address = address;
     location.city = city;
     location.state = state;
@@ -64,9 +64,11 @@ const saveLocation = async (location: Location, orm: Connection, {title, address
 
     location.latitude = coord.latitude!.valueOf();
     location.longitude = coord.longitude!.valueOf();
-    location.slug = slugify(location.humanReadableAddress(), {
-        lower: true
-    });
+    if(!update){
+        location.slug = slugify(location.humanReadableAddress(), {
+            lower: true
+        });
+    }
 
     const errors = await validate(location);
     const errorMessage = `The following inputs failed validation ${humanReadableList(errors.map(e => e.property))}.`;
@@ -86,7 +88,7 @@ const saveLocation = async (location: Location, orm: Connection, {title, address
 export const createLocation: LocationResolver = async (parent, {title, address, city, state, country}, {orm, req}) => {
     if(req.userId){
         const location = new Location();
-        return saveLocation(location, orm, {title, address, city, state, country, userId: req.userId});
+        return saveLocation(location, orm, false, {title, address, city, state, country, userId: req.userId});
     }
 
     AuthError("You must be authenticated to perform this action.");
@@ -95,25 +97,21 @@ export const createLocation: LocationResolver = async (parent, {title, address, 
 
 export const updateLocation: LocationResolver = async (parent, {title, address, city, state, country, slug}, {orm, req}) => {
     if(req.userId) {
-
-        try {
-            const location = await orm 
-                .manager 
-                .connection 
-                .getRepository(Location)
-                .findOneOrFail({
-                    where: {
-                        slug
-                    }
-                });
-                if(location.user_id !== req.userId){
-                    AuthError("You don't have access to this location.");
-                    return null;
-                }
-                return saveLocation(location, orm, {title, address, city, state, country, userId: location.user_id});
-        } catch {
-            throw new ApolloError("Could not find the specified location.", LOCATION_VALIDATION);
+        const location = await orm 
+            .manager 
+            .connection 
+            .getRepository(Location)
+            .findOneOrFail({
+                where: {
+                    slug
+                },
+                relations: ["user"]
+            });
+        if(location.user.id !== req.userId){
+            AuthError("You don't have access to this location.");
+            return null;
         }
+        return saveLocation(location, orm, true, {title, address, city, state, country, userId: location.user_id});
     }
     AuthError("You must be authenticated to perform this action.");
     return null;

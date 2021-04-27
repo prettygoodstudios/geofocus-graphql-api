@@ -9,7 +9,9 @@ const typeDefs = gql`
         state: String,
         address: String,
         photos: [Photo],
-        slug: String
+        slug: String,
+        user: Profile
+        country: String
     }
 
     type Photo {

@@ -2,6 +2,7 @@ import {Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, Connectio
 import {EntityRepository, Repository} from "typeorm";
 import { getProfileURL } from "../config";
 import Photo from "./photo";
+import Location from "./location";
 
 
 @Entity("users")
@@ -39,6 +40,12 @@ export default class User {
 
     @Column()
     zoom: number
+
+    @OneToMany(() => Location, location => location.user)
+    @JoinColumn({
+        name: "id"
+    })
+    user: User
 
     @OneToMany(() => Photo, photo => photo.user)
     @JoinColumn({

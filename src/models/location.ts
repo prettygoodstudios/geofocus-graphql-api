@@ -1,6 +1,7 @@
 import { Length, IsNotEmpty } from "class-validator";
-import {Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToOne} from "typeorm";
 import Photo from "./photo";
+import User from "./user";
 
 @Entity("locations")
 export default class Location {
@@ -51,6 +52,10 @@ export default class Location {
     @Column()
     @IsNotEmpty()
     user_id: number;
+
+    @ManyToOne(() => User, user => user.id)
+    @JoinColumn({name: "id"})
+    user: User
 
     @Column()
     @IsNotEmpty()
