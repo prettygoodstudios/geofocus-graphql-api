@@ -4,7 +4,7 @@ import typeDefs from "./apiSchema";
 import { connection } from "./db";
 
 import {locations, location, createLocation, updateLocation} from "./resolvers/locations";
-import { photo } from "./resolvers/photos";
+import { photo, upload } from "./resolvers/photos";
 import {topUsers, user, me} from "./resolvers/users";
 import { ApolloContext } from "./types";
 import { login, logout } from "./resolvers/auth";
@@ -32,7 +32,8 @@ const main = async () => {
             login,
             logout,
             createLocation,
-            updateLocation
+            updateLocation,
+            upload
         }
     }
 

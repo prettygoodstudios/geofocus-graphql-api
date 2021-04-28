@@ -3,7 +3,7 @@ import Location from "../models/location";
 import { LocationResolver, PublicSlugResolver, StandardResolver } from "../types";
 import slugify from "slugify";
 import { validate } from "class-validator";
-import { ApolloError } from "apollo-server-express";
+import { ApolloError } from "apollo-server";
 import { humanReadableList } from "../helpers";
 import { AuthError } from "./auth";
 import { Connection } from "typeorm";

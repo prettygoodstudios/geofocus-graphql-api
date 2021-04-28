@@ -1,4 +1,4 @@
-import {gql} from "apollo-server";
+import {gql} from "apollo-server-express";
 
 const typeDefs = gql`
     type Location {
@@ -68,7 +68,8 @@ const typeDefs = gql`
         login(email: String, password: String): Profile,
         logout: Boolean,
         createLocation(title: String, address: String, city: String, state: String, country: String): Location
-        updateLocation(title: String, address: String, city: String, state: String, country: String, slug: String): Location
+        updateLocation(title: String, address: String, city: String, state: String, country: String, slug: String): Location,
+        upload(file: Upload!): Photo
     }
 `;
 

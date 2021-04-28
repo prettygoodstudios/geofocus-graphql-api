@@ -1,4 +1,3 @@
-import { ApolloError } from "apollo-server-errors";
 import User, { UserRepository } from "../models/user";
 import { PublicSlugResolver, StandardResolver } from "../types";
 import { AuthError } from "./auth";
