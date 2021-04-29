@@ -1,4 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn} from "typeorm";
+import { Length, IsNotEmpty } from "class-validator";
 import { getPhotoURL } from "../config";
 import Location from "./location";
 import User from "./user";
@@ -10,6 +11,8 @@ export default class Photo {
     id: number;
 
     @Column()
+    @IsNotEmpty()
+    @Length(2, 255)
     caption: string;
 
     @Column()
@@ -39,6 +42,12 @@ export default class Photo {
 
     @Column()
     offsetY: number 
+
+    @Column()
+    created_at: Date 
+
+    @Column()
+    updated_at: Date
 
     @ManyToOne(() => User, user => user.photos)
     @JoinColumn({
