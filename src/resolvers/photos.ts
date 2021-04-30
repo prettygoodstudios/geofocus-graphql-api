@@ -1,6 +1,5 @@
-import { buildPhotoAWSPath, s3 } from "../config";
+import { buildPhotoAWSPath } from "../config";
 import Photo from "../models/photo";
-import {PassThrough, Readable} from "stream";
 import { PublicSlugResolver, StandardResolver } from "../types";
 import slugify from "slugify";
 import { validate } from "class-validator";
@@ -9,6 +8,7 @@ import { humanReadableList } from "../helpers";
 import { AuthError } from "./auth";
 import Location from  "../models/location";
 import User from "../models/user";
+import { uploadToS3 } from "../uploader";
 
 export const photo: PublicSlugResolver<Promise<Photo|null>> = async (parent, {slug}, {orm})  => {    
     const photos = await orm
@@ -24,19 +24,6 @@ export const photo: PublicSlugResolver<Promise<Photo|null>> = async (parent, {sl
         });
         
     return photos.length > 0 ? photos[0] : null;
-}
-
-const uploadFromStream = (s3: any, filename: string): PassThrough => {
-    const pass = new PassThrough();
-  
-    const params = {Bucket: "locofinderutah", Key: `${filename}`, Body: pass, ACL:'public-read'};
-    s3.upload(params).promise().then((data: any) => {
-        console.log(data);
-    }).catch((error: any) => {
-        console.log(error);
-    });
-  
-    return pass;
 }
 
 const PHOTO_ERROR = 'PHOTO_ERROR';
@@ -76,14 +63,8 @@ export const upload: StandardResolver<Promise<Photo|null>> = async (parent, {fil
             await orm 
                 .manager 
                 .getRepository(Photo)
-                .save(photo);
-            const {createReadStream, filename, mimetype} = await file;
-            const stream = createReadStream();
-            await new Promise(res => {
-                stream.pipe(uploadFromStream(s3, buildPhotoAWSPath(filename, photo.id))).on("close", res)
-            });
-            
-            photo.img_url = filename;
+                .save(photo);            
+            photo.img_url = await uploadToS3(file, buildPhotoAWSPath, photo.id);
             await orm 
                 .manager 
                 .getRepository(Photo)
