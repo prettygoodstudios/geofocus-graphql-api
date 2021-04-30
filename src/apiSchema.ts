@@ -69,7 +69,7 @@ const typeDefs = gql`
         logout: Boolean,
         createLocation(title: String, address: String, city: String, state: String, country: String): Location
         updateLocation(title: String, address: String, city: String, state: String, country: String, slug: String): Location,
-        upload(file: Upload!, width: Float, height: Float, offsetX: Float, offsetY: Float, caption: String, location: String): Photo
+        upload(file: Upload!, width: Float, height: Float, offsetX: Float, offsetY: Float, caption: String, location: String, zoom: Float): Photo
     }
 `;
 

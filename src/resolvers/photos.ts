@@ -41,7 +41,7 @@ const uploadFromStream = (s3: any, filename: string): PassThrough => {
 
 const PHOTO_ERROR = 'PHOTO_ERROR';
 
-export const upload: StandardResolver<Promise<Photo|null>> = async (parent, {file, location, width, height, offsetX, offsetY, caption}, {orm, req}) => {
+export const upload: StandardResolver<Promise<Photo|null>> = async (parent, {file, location, width, height, offsetX, offsetY, caption, zoom}, {orm, req}) => {
     if (req.userId){
         const photo = new Photo;
         const user = await orm
@@ -64,20 +64,19 @@ export const upload: StandardResolver<Promise<Photo|null>> = async (parent, {fil
         photo.height = parseInt(height);
         photo.offsetX = parseInt(offsetX);
         photo.offsetY = parseInt(offsetY);
-        photo.zoom = 1;
+        photo.zoom = zoom;
+        photo.views = 0;
         photo.caption = caption;
         photo.created_at = new Date();
         photo.updated_at = new Date();
         photo.slug = slugify(photo.caption+photo.location.title);
-
         const errors = await validate(photo);
 
-        await orm 
-            .manager 
-            .getRepository(Photo)
-            .save(photo);
-
         if (errors.length === 0){
+            await orm 
+                .manager 
+                .getRepository(Photo)
+                .save(photo);
             const {createReadStream, filename, mimetype} = await file;
             const stream = createReadStream();
             await new Promise(res => {

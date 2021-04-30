@@ -26,21 +26,27 @@ export default class Photo {
     location: Location
 
     @Column()
+    @IsNotEmpty()
     slug: string 
 
     @Column()
+    @IsNotEmpty()
     width: number 
 
     @Column()
+    @IsNotEmpty()
     height: number 
 
     @Column()
+    @IsNotEmpty()
     zoom: number 
 
     @Column()
+    @IsNotEmpty()
     offsetX: number 
 
     @Column()
+    @IsNotEmpty()
     offsetY: number 
 
     @Column()
