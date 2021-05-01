@@ -90,6 +90,7 @@ export class UserRepository extends Repository<User> {
         const users = await this
             .createQueryBuilder()
             .leftJoin(Photo, "photos", "photos.user_id = User.id")
+            .where("photos.views IS NOT NULL")
             .groupBy("User.id")
             .orderBy("SUM(photos.views)", "DESC")
             .limit(10)
@@ -107,7 +108,7 @@ export class UserRepository extends Repository<User> {
                 order: {
                     views: "DESC"
                 }
-            });        
+            });
 
         const photoMap: Map<number, Photo[]> = new Map();
 
