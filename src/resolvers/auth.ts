@@ -8,7 +8,6 @@ import { validate } from "class-validator";
 import { humanReadableList } from "../helpers";
 import slugify from "slugify";
 import { uploadToS3 } from "../uploader";
-import { UsingJoinColumnIsNotAllowedError } from "typeorm";
 
 
 const AUTH_ERROR = 'AUTH_ERROR';
@@ -66,10 +65,14 @@ export const register: RegisterResolver = async (parent, {email, password, displ
         throw new ApolloError(`The following failed validation ${humanReadableList(errors.map(e => e.property))}`, REGISTER_ERROR);
     }
 
-    await orm
-        .manager
-        .getRepository(User)
-        .save(user);
+    try {
+        await orm
+            .manager
+            .getRepository(User)
+            .save(user);
+    } catch (error) {
+        throw new ApolloError(`Either your email or display name has already been taken.`, REGISTER_ERROR);
+    }
     
     user.profile_img = await uploadToS3(file, buildProfileAWSPath, user.id);
 

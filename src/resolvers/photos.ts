@@ -22,6 +22,15 @@ export const photo: PublicSlugResolver<Promise<Photo|null>> = async (parent, {sl
             },
             relations: ["user", "location"]
         });
+
+    if (photos.length > 0) {
+        photos[0].views += 1;
+        await orm 
+            .manager
+            .connection 
+            .getRepository(Photo)
+            .save(photos[0]);
+    }
         
     return photos.length > 0 ? photos[0] : null;
 }
