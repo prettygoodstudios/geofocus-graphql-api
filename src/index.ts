@@ -7,7 +7,7 @@ import {locations, location, createLocation, updateLocation} from "./resolvers/l
 import { photo, upload } from "./resolvers/photos";
 import {topUsers, user, me} from "./resolvers/users";
 import { ApolloContext } from "./types";
-import { login, logout } from "./resolvers/auth";
+import { login, logout, register } from "./resolvers/auth";
 import * as express from "express";
 import * as cookieParser from "cookie-parser";
 import { verify } from "jsonwebtoken";
@@ -33,7 +33,8 @@ const main = async () => {
             logout,
             createLocation,
             updateLocation,
-            upload
+            upload,
+            register
         }
     }
 

@@ -3,6 +3,7 @@ import {EntityRepository, Repository} from "typeorm";
 import { getProfileURL } from "../config";
 import Photo from "./photo";
 import Location from "./location";
+import {IsEmail, IsNotEmpty} from "class-validator";
 
 
 @Entity("users")
@@ -12,33 +13,42 @@ export default class User {
     id: number;
 
     @Column()
+    @IsEmail()
     email: string 
 
     @Column()
+    @IsNotEmpty()
     bio: string
 
     @Column()
+    @IsNotEmpty()
     display: string
 
     @Column()
+    @IsNotEmpty()
     slug: string 
 
     @Column()
     profile_img: string 
 
     @Column()
+    @IsNotEmpty()
     offsetX: number
 
     @Column()
+    @IsNotEmpty()
     offsetY: number 
 
     @Column()
+    @IsNotEmpty()
     width: number 
 
     @Column()
+    @IsNotEmpty()
     height: number
 
     @Column()
+    @IsNotEmpty()
     zoom: number
 
     @OneToMany(() => Location, location => location.user)
@@ -59,6 +69,13 @@ export default class User {
 
     @Column()
     encrypted_password: string
+
+
+    @Column()
+    created_at: Date
+
+    @Column()
+    updated_at: Date
 
     views: number
 
@@ -108,7 +125,7 @@ export class UserRepository extends Repository<User> {
             user.photos = photoMap.get(user.id)!;
         });
 
-        return users;
+        return users.filter(u => u.photos);
     }
 
 }

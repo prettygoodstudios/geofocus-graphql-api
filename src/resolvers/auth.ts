@@ -3,10 +3,12 @@ import {compare, hash} from "bcrypt";
 import User from "../models/user";
 import { clearTokens, generateTokens } from "../auth";
 import { ApolloError } from "apollo-server-errors";
-import { SALT } from "../config";
+import { buildProfileAWSPath, SALT } from "../config";
 import { validate } from "class-validator";
 import { humanReadableList } from "../helpers";
 import slugify from "slugify";
+import { uploadToS3 } from "../uploader";
+import { UsingJoinColumnIsNotAllowedError } from "typeorm";
 
 
 const AUTH_ERROR = 'AUTH_ERROR';
@@ -42,18 +44,21 @@ export const login: LoginResolver = async (parent, {email, password}, {orm, res}
 }
 
 const REGISTER_ERROR = 'REGISTER_ERROR';
-export const register: RegisterResolver = async (parent, {email, password, display, bio, img, zoom, width, height, offsetX, offsetY}, {orm, res}) => {
+export const register: RegisterResolver = async (parent, {email, password, display, bio, file, zoom, width, height, offsetX, offsetY}, {orm, res}) => {
+    console.log("It hit the register resolver")
     const user = new User();
     user.email = email;
-    user.encrypted_password = await hash(password, SALT);
+    user.encrypted_password = await hash(password, SALT());
     user.display = display;
     user.bio = bio;
     user.zoom = zoom;
-    user.width = width;
-    user.height = height;
-    user.offsetX = offsetX;
-    user.offsetY = offsetY;
+    user.width = Math.floor(width);
+    user.height = Math.floor(height);
+    user.offsetX = Math.floor(offsetX);
+    user.offsetY = Math.floor(offsetY);
     user.slug = slugify(user.display);
+    user.created_at = new Date();
+    user.updated_at = new Date();
 
     const errors = await validate(user);
 
@@ -66,9 +71,16 @@ export const register: RegisterResolver = async (parent, {email, password, displ
         .getRepository(User)
         .save(user);
     
-    
+    user.profile_img = await uploadToS3(file, buildProfileAWSPath, user.id);
 
-    return null;
+    await orm
+        .manager
+        .getRepository(User)
+        .save(user);
+
+    generateTokens(user, res);
+
+    return user;
 }
 
 export const logout: StandardResolver<void> = async (parent, args, {orm, res}) => {
