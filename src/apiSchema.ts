@@ -41,6 +41,7 @@ const typeDefs = gql`
         photos: [Photo]
     }
 
+
     type PrivateUserData {
         slug: String,
         display: String,
@@ -51,7 +52,7 @@ const typeDefs = gql`
         offsetX: Float,
         offsetY: Float,
         profile_url: String,
-        photos: [Photo],
+        photos: [Photo]
         email: String
     }
 

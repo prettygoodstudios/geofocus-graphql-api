@@ -54,7 +54,7 @@ export default class Location {
     user_id: number;
 
     @ManyToOne(() => User, user => user.id)
-    @JoinColumn({name: "id"})
+    @JoinColumn({name: "user_id"})
     user: User
 
     @Column()
