@@ -44,9 +44,11 @@ export const login: LoginResolver = async (parent, {email, password}, {orm, res}
 
 const REGISTER_ERROR = 'REGISTER_ERROR';
 export const register: RegisterResolver = async (parent, {email, password, display, bio, file, zoom, width, height, offsetX, offsetY}, {orm, res}) => {
-    console.log("It hit the register resolver")
     const user = new User();
     user.email = email;
+    if(!password || password.length < 6){
+        throw new ApolloError("Must provide a password that is atleast six characters in length.", REGISTER_ERROR);
+    }
     user.encrypted_password = await hash(password, SALT());
     user.display = display;
     user.bio = bio;
@@ -73,15 +75,18 @@ export const register: RegisterResolver = async (parent, {email, password, displ
     } catch (error) {
         throw new ApolloError(`Either your email or display name has already been taken.`, REGISTER_ERROR);
     }
-    
-    user.profile_img = await uploadToS3(file, buildProfileAWSPath, user.id);
+    try {
+        user.profile_img = await uploadToS3(file, buildProfileAWSPath, user.id);
 
-    await orm
-        .manager
-        .getRepository(User)
-        .save(user);
+        await orm
+            .manager
+            .getRepository(User)
+            .save(user);
 
-    generateTokens(user, res);
+        generateTokens(user, res);
+    } catch(error) {
+        throw new ApolloError(`You must provide a profile picture.`, REGISTER_ERROR);
+    }
 
     return user;
 }
