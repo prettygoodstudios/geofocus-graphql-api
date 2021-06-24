@@ -63,8 +63,10 @@ export const register: RegisterResolver = async (parent, {email, password, displ
 
     const errors = await validate(user);
 
-    if (errors.length > 0) {
-        throw new ApolloError(`The following failed validation ${humanReadableList(errors.map(e => e.property))}`, REGISTER_ERROR);
+    const fileError = file ? [] : ["profile picture"];
+
+    if (errors.length > 0 || fileError.length > 0) {
+        throw new ApolloError(`The following failed validation ${humanReadableList(errors.map(e => e.property).concat(fileError))}.`, REGISTER_ERROR);
     }
 
     try {
@@ -86,7 +88,7 @@ export const register: RegisterResolver = async (parent, {email, password, displ
         generateTokens(user, res);
     } catch(error) {
         throw new ApolloError(`You must provide a profile picture.`, REGISTER_ERROR);
-    }
+    } 
 
     return user;
 }
