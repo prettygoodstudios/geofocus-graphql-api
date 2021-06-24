@@ -56,13 +56,21 @@ const typeDefs = gql`
         email: String
     }
 
+    type Review {
+        score: Float,
+        message: String,
+        location: Location,
+        user: Profile
+    }
+
     type Query {
         locations: [Location],
         location(slug: String): Location,
         photo(slug: String): Photo, 
         topUsers: [Profile],
         user(slug: String): Profile,
-        me: PrivateUserData
+        me: PrivateUserData,
+        reviews(slug: String): [Review]
     }
 
     type Mutation {

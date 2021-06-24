@@ -1,6 +1,7 @@
 import { Length, IsNotEmpty } from "class-validator";
 import {Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToOne} from "typeorm";
 import Photo from "./photo";
+import Review from "./review";
 import User from "./user";
 
 @Entity("locations")
@@ -64,6 +65,10 @@ export default class Location {
     @OneToMany(() => Photo, photo => photo.location)
     @JoinColumn({name: "id"})
     photos: Photo[]
+
+    @OneToMany(() => Review, review => review.location)
+    @JoinColumn({name: "id"})
+    reviews: Review[]
 
     humanReadableAddress(){
         return `${this.address}, ${this.city}, ${this.state}, ${this.country}`;
