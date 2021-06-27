@@ -95,7 +95,7 @@ export const createLocation: LocationResolver = async (parent, {title, address, 
 }
 
 export const updateLocation: LocationResolver = async (parent, {title, address, city, state, country, slug}, {orm, req}) => {
-    if(req.userId) {
+    if (req.userId) {
         const location = await orm 
             .manager 
             .connection 
