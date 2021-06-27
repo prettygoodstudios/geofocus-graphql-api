@@ -1,6 +1,7 @@
 import { PassThrough } from "stream";
 import { s3 } from "./config";
 
+
 const uploadFromStream = (s3: any, filename: string): PassThrough => {
     const pass = new PassThrough();
   
@@ -23,4 +24,13 @@ export const uploadToS3 = async (file: Promise<any>, pathGenerater: PathGenerato
         stream.pipe(uploadFromStream(s3, pathGenerater(filename, id))).on("close", res)
     });
     return filename;
+}
+
+export const deleteFromS3 = (filename: string) => {
+    const params = {Bucket: "locofinderutah", Key: `${filename}`};
+    s3.deleteObject(params).promise().then((data: any) => {
+        console.log(data);
+    }).catch((error: any) => {
+        console.log(error);
+    });
 }

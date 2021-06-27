@@ -8,7 +8,7 @@ import { humanReadableList } from "../helpers";
 import { AuthError } from "./auth";
 import Location from  "../models/location";
 import User from "../models/user";
-import { uploadToS3 } from "../uploader";
+import { deleteFromS3, uploadToS3 } from "../uploader";
 
 export const photo: PublicSlugResolver<Promise<Photo|null>> = async (parent, {slug}, {orm})  => {    
     const photos = await orm
@@ -84,4 +84,28 @@ export const upload: StandardResolver<Promise<Photo|null>> = async (parent, {fil
         }
     }
     throw AuthError("You must be authenticated to upload an photo.");
+}
+
+export const deletePhoto: PublicSlugResolver<Promise<number|undefined|null>> = async (parent, {slug}, {orm, req}) => {
+    if (req.userId) {
+        try {
+            const result = await orm
+                .manager 
+                .getRepository(Photo)
+                .findOneOrFail({
+                    slug,
+                    user: {
+                        id: req.userId
+                    }
+                });
+            deleteFromS3(result.img_url);
+            return (await orm
+                .manager 
+                .getRepository(Photo)
+                .delete(result)).affected;
+        } catch {
+            throw new ApolloError("Photo does not exist.", PHOTO_ERROR);
+        }
+    }
+    throw AuthError("You must be authenticated to perform this action.");
 }

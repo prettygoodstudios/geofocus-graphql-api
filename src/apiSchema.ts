@@ -80,6 +80,7 @@ const typeDefs = gql`
         updateLocation(title: String, address: String, city: String, state: String, country: String, slug: String): Location
         deleteLocation(slug: String): Int
         upload(file: Upload!, width: Float, height: Float, offsetX: Float, offsetY: Float, caption: String, location: String, zoom: Float): Photo,
+        deletePhoto(slug: String): Int
         register(email: String, password: String, display: String, bio: String, file: Upload, width: Float, height: Float, offsetX: Float, offsetY: Float, zoom: Float): Profile
         review(location: String, message: String, score: Int): Review
         deleteReview(slug: String): Int
