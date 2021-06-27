@@ -91,8 +91,7 @@ export const createLocation: LocationResolver = async (parent, {title, address, 
         return saveLocation(location, orm, false, {title, address, city, state, country, userId: req.userId});
     }
 
-    AuthError("You must be authenticated to perform this action.");
-    return null;
+    throw AuthError("You must be authenticated to perform this action.");
 }
 
 export const updateLocation: LocationResolver = async (parent, {title, address, city, state, country, slug}, {orm, req}) => {
@@ -113,6 +112,22 @@ export const updateLocation: LocationResolver = async (parent, {title, address, 
         }
         return saveLocation(location, orm, true, {title, address, city, state, country, userId: location.user_id});
     }
-    AuthError("You must be authenticated to perform this action.");
-    return null;
+    throw AuthError("You must be authenticated to perform this action.");
+}
+
+export const deleteLocation: PublicSlugResolver<Promise<number|null|undefined>> = async (parent, {slug}, {orm, req}) => {
+    if (req.userId) {
+        const result = await orm
+            .manager 
+            .connection
+            .getRepository(Location)
+            .delete({
+                user: {
+                    id: req.userId
+                },
+                slug
+            });
+        return result.affected;
+    }
+    throw AuthError("You must be authenticated to perform this action.");
 }

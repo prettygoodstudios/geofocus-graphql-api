@@ -6,7 +6,6 @@ import { ApolloError } from "apollo-server-express";
 import { AuthError } from "./auth";
 import { validate } from "class-validator";
 import { humanReadableList } from "../helpers";
-import { DeleteResult } from "typeorm";
 
 
 
@@ -80,24 +79,16 @@ export const review: ReviewResolver = async (parent, {location, message, score},
 
 export const deleteReview: PublicSlugResolver<Promise<number|null|undefined>> = async (parent, {slug}, {orm, req}) => {
     if (req.userId) {
-        const location = await orm
-            .manager 
-            .getRepository(Location)
-            .findOneOrFail({
-                slug
-            });
-        const user = await orm
-            .manager 
-            .getRepository(User)
-            .findOneOrFail({
-                id: req.userId
-            });
         const result = await orm
             .manager
             .getRepository(Review)
             .delete({
-                location,
-                user
+                location: {
+                    slug
+                },
+                user: {
+                    id: req .userId
+                }
             });
         return result.affected;
     }

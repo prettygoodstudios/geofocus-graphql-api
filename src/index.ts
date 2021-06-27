@@ -3,7 +3,7 @@ import {ApolloServer} from "apollo-server-express";
 import typeDefs from "./apiSchema";
 import { connection } from "./db";
 
-import {locations, location, createLocation, updateLocation} from "./resolvers/locations";
+import {locations, location, createLocation, updateLocation, deleteLocation} from "./resolvers/locations";
 import { photo, upload } from "./resolvers/photos";
 import {topUsers, user, me} from "./resolvers/users";
 import { ApolloContext } from "./types";
@@ -35,6 +35,7 @@ const main = async () => {
             logout,
             createLocation,
             updateLocation,
+            deleteLocation,
             upload,
             register,
             review,
