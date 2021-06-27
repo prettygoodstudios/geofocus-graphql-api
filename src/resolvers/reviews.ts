@@ -6,6 +6,7 @@ import { ApolloError } from "apollo-server-express";
 import { AuthError } from "./auth";
 import { validate } from "class-validator";
 import { humanReadableList } from "../helpers";
+import { DeleteResult } from "typeorm";
 
 
 
@@ -73,6 +74,32 @@ export const review: ReviewResolver = async (parent, {location, message, score},
             .manager 
             .getRepository(Review)
             .save(review);
+    }
+    throw AuthError("You must be authenticated to perform this action.");
+}
+
+export const deleteReview: PublicSlugResolver<Promise<number|null|undefined>> = async (parent, {slug}, {orm, req}) => {
+    if (req.userId) {
+        const location = await orm
+            .manager 
+            .getRepository(Location)
+            .findOneOrFail({
+                slug
+            });
+        const user = await orm
+            .manager 
+            .getRepository(User)
+            .findOneOrFail({
+                id: req.userId
+            });
+        const result = await orm
+            .manager
+            .getRepository(Review)
+            .delete({
+                location,
+                user
+            });
+        return result.affected;
     }
     throw AuthError("You must be authenticated to perform this action.");
 }
