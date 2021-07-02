@@ -11,7 +11,8 @@ const typeDefs = gql`
         photos: [Photo],
         slug: String,
         user: Profile
-        country: String
+        country: String,
+        reviews: [Review]
     }
 
     type Photo {

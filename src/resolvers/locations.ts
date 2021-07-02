@@ -27,7 +27,7 @@ export const location: PublicSlugResolver<Promise<Location|null>> = async (paren
             where: {
                 slug
             },
-            relations: ["photos", "photos.user", "photos.location", "user"]
+            relations: ["photos", "photos.user", "photos.location", "user", "reviews", "reviews.user"]
         });
     return locations.length > 0 ? locations[0] : null;
 }
