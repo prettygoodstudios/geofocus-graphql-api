@@ -102,7 +102,9 @@ export const deletePhoto: PublicSlugResolver<Promise<number|undefined|null>> = a
             return (await orm
                 .manager 
                 .getRepository(Photo)
-                .delete(result)).affected;
+                .delete({
+                    id: result.id
+                })).affected;
         } catch {
             throw new ApolloError("Photo does not exist.", PHOTO_ERROR);
         }
