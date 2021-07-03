@@ -104,7 +104,7 @@ export const updateLocation: LocationResolver = async (parent, {title, address, 
                 where: {
                     slug
                 },
-                relations: ["user"]
+                relations: ["user", "reviews", "reviews.user", "photos", "photos.user"]
             });
         if(location.user.id !== req.userId){
             AuthError("You don't have access to this location.");
