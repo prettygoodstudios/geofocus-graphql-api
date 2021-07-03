@@ -1,11 +1,12 @@
 import Review from "../models/review";
 import Location from "../models/location"
-import { PublicSlugResolver, ReviewResolver } from "../types";
+import { PublicSlugResolver, ReviewResolver, StandardResolver } from "../types";
 import User from "../models/user";
 import { ApolloError } from "apollo-server-express";
 import { AuthError } from "./auth";
 import { validate } from "class-validator";
 import { humanReadableList } from "../helpers";
+import { In } from "typeorm";
 
 
 
@@ -77,20 +78,33 @@ export const review: ReviewResolver = async (parent, {location, message, score},
     throw AuthError("You must be authenticated to perform this action.");
 }
 
-export const deleteReview: PublicSlugResolver<Promise<number|null|undefined>> = async (parent, {slug}, {orm, req}) => {
+export const deleteReview: StandardResolver<Promise<any>> = async (parent, {location}, {orm, req}) => {
     if (req.userId) {
-        const result = await orm
+        const reviewLocation = await orm 
+            .manager 
+            .getRepository(Location)
+            .findOneOrFail({
+                slug: location
+            })
+            .catch(() => {
+                throw new ApolloError("Invalid location.", REVIEW_ERROR);
+            });
+        const user = await orm
             .manager
+            .getRepository(User)
+            .findOneOrFail({
+                id: req.userId
+            })
+            .catch(() => {
+                throw new ApolloError("Invalid user.", REVIEW_ERROR)
+            });
+        return (await orm
+            .manager 
             .getRepository(Review)
             .delete({
-                location: {
-                    slug
-                },
-                user: {
-                    id: req .userId
-                }
-            });
-        return result.affected;
+                location: reviewLocation,
+                user
+            })).affected;
     }
     throw AuthError("You must be authenticated to perform this action.");
 }
