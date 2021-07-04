@@ -66,7 +66,8 @@ const saveLocation = async (location: Location, orm: Connection, update: boolean
     location.longitude = coord.longitude!.valueOf();
     if(!update){
         location.slug = slugify(location.humanReadableAddress(), {
-            lower: true
+            lower: true,
+            strict: true
         });
     }
 

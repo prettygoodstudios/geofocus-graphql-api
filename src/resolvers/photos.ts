@@ -65,7 +65,9 @@ export const upload: StandardResolver<Promise<Photo|null>> = async (parent, {fil
         photo.caption = caption;
         photo.created_at = new Date();
         photo.updated_at = new Date();
-        photo.slug = slugify(photo.caption+photo.location.title);
+        photo.slug = slugify(photo.caption+photo.location.title, {
+            strict: true
+        });
         const errors = await validate(photo);
 
         if (errors.length === 0){
