@@ -85,7 +85,7 @@ const typeDefs = gql`
         deletePhoto(slug: String): Int
         register(email: String, password: String, display: String, bio: String, file: Upload, width: Float, height: Float, offsetX: Float, offsetY: Float, zoom: Float): Profile
         review(location: String, message: String, score: Float, user: String): Review
-        deleteReview(location: String): Int
+        deleteReview(location: String, user: String): Int
     }
 `;
 
