@@ -53,8 +53,9 @@ const typeDefs = gql`
         offsetX: Float,
         offsetY: Float,
         profile_url: String,
-        photos: [Photo]
-        email: String
+        photos: [Photo],
+        email: String,
+        role: String
     }
 
     type Review {
@@ -83,7 +84,7 @@ const typeDefs = gql`
         upload(file: Upload!, width: Float, height: Float, offsetX: Float, offsetY: Float, caption: String, location: String, zoom: Float): Photo,
         deletePhoto(slug: String): Int
         register(email: String, password: String, display: String, bio: String, file: Upload, width: Float, height: Float, offsetX: Float, offsetY: Float, zoom: Float): Profile
-        review(location: String, message: String, score: Float): Review
+        review(location: String, message: String, score: Float, user: String): Review
         deleteReview(location: String): Int
     }
 `;

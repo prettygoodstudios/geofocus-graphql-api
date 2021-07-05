@@ -29,7 +29,7 @@ export const reviews: PublicSlugResolver<Promise<Review[]>> = async (parent, {sl
 
 const REVIEW_ERROR = "REVIEW_ERROR";
 
-export const review: ReviewResolver = async (parent, {location, message, score}, {orm, req}) => {
+export const review: ReviewResolver = async (parent, {location, message, score, user}, {orm, req}) => {
     if (req.userId) {
         const review = new Review();
         review.user = await orm
@@ -41,6 +41,17 @@ export const review: ReviewResolver = async (parent, {location, message, score},
             .catch(() => {
                 throw new ApolloError("Invalid user.", REVIEW_ERROR)
             });
+        if (review.user.role === 'admin' && user) {
+            review.user = await orm
+                .manager
+                .getRepository(User)
+                .findOneOrFail({
+                    slug: user
+                })
+                .catch(() => {
+                    throw new ApolloError("Invalid user.", REVIEW_ERROR)
+                });
+        }
         review.location = await orm 
             .manager 
             .getRepository(Location)
@@ -97,13 +108,11 @@ export const deleteReview: StandardResolver<Promise<any>> = async (parent, {loca
             .catch(() => {
                 throw new ApolloError("Invalid user.", REVIEW_ERROR)
             });
+        const where = user.role === 'admin' ? { location: reviewLocation } : { location: reviewLocation, user };
         return (await orm
             .manager 
             .getRepository(Review)
-            .delete({
-                location: reviewLocation,
-                user
-            })).affected;
+            .delete(where)).affected;
     }
     throw AuthError("You must be authenticated to perform this action.");
 }

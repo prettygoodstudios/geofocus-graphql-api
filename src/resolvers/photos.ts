@@ -91,18 +91,20 @@ export const upload: StandardResolver<Promise<Photo|null>> = async (parent, {fil
 export const deletePhoto: PublicSlugResolver<Promise<number|undefined|null>> = async (parent, {slug}, {orm, req}) => {
     if (req.userId) {
         try {
+            const user = await orm 
+                .manager
+                .getRepository(User)
+                .findOneOrFail({
+                    id: req.userId
+                });
+            const where = user.role === 'admin' ? { slug } : { slug, user: { id: req.userId } };
             const result = await orm
                 .manager 
                 .getRepository(Photo)
-                .findOneOrFail({
-                    slug,
-                    user: {
-                        id: req.userId
-                    }
-                });
+                .findOneOrFail(where);
             deleteFromS3(result.img_url);
             return (await orm
-                .manager 
+                .manager
                 .getRepository(Photo)
                 .delete({
                     id: result.id

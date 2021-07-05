@@ -77,6 +77,9 @@ export default class User {
     @Column()
     updated_at: Date
 
+    @Column()
+    role: string
+
     views: number
 
 }
