@@ -48,12 +48,9 @@ export const report: ReportResolver = async (parent, {message, location, photo, 
         report.review = (await orm
             .manager
             .getRepository(Review)
-            .findOne({
-                where: {
-                    slug: review
-                },
+            .find({
                 relations: ["location", "user"]
-            }))!;
+            })).filter((r) => r.slug() === review)[0];
 
         const errors = await validate(report);
         if (errors.length > 0) {
@@ -62,9 +59,9 @@ export const report: ReportResolver = async (parent, {message, location, photo, 
 
         if (report.review || report.photo || report.location) {
             return await orm
-            .manager 
-            .getRepository(Report)
-            .save(report);
+                .manager 
+                .getRepository(Report)
+                .save(report);
         }
         throw new ApolloError("There is no selected entity for this report.", REPORT_ERROR);
     }
