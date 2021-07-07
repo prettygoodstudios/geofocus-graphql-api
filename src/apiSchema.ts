@@ -62,7 +62,8 @@ const typeDefs = gql`
         score: Float,
         message: String,
         location: Location,
-        user: Profile
+        user: Profile,
+        slug: String
     }
 
     type Report {
@@ -94,6 +95,7 @@ const typeDefs = gql`
         register(email: String, password: String, display: String, bio: String, file: Upload, width: Float, height: Float, offsetX: Float, offsetY: Float, zoom: Float): Profile
         review(location: String, message: String, score: Float, user: String): Review
         deleteReview(location: String, user: String): Int
+        report(message: String, location: String, review: String, photo: String): Report
     }
 `;
 

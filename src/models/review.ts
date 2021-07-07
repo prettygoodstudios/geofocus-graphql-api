@@ -1,4 +1,5 @@
 import { Length, IsNotEmpty, IsNumber, Min, Max } from "class-validator";
+import slugify from "slugify";
 import {Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToOne} from "typeorm";
 import Location from "./location";
 import User from "./user";
@@ -27,7 +28,7 @@ export default class Review {
 
     @Column()
     updated_at: Date;
-    
+
     @ManyToOne(() => Location, location => location.id)
     @JoinColumn({name: "location_id"})
     location: Location 
@@ -35,4 +36,8 @@ export default class Review {
     @ManyToOne(() => User, user => user.id)
     @JoinColumn({name: "user_id"})
     user: User 
+
+    slug(){
+        return slugify(`${this.message.slice(0, 10)} ${this.user.slug} ${this.location.slug}`, {strict: true, lower: true});
+    } 
 }
