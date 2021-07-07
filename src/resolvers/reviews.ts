@@ -111,7 +111,7 @@ export const deleteReview: StandardResolver<Promise<any>> = async (parent, {loca
         const user = await getUser({id: req.userId});
         const where = (user.role === 'admin' && slug) ? { location: reviewLocation, user: (await getUser({slug})) } : { location: reviewLocation, user };
         return (await orm
-            .manager 
+            .manager    
             .getRepository(Review)
             .delete(where)).affected;
     }

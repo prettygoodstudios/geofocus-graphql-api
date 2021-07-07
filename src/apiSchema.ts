@@ -65,6 +65,13 @@ const typeDefs = gql`
         user: Profile
     }
 
+    type Report {
+        message: String,
+        location: Location,
+        photo: Photo,
+        review: Review
+    }
+
     type Query {
         locations: [Location],
         location(slug: String): Location,
@@ -72,7 +79,8 @@ const typeDefs = gql`
         topUsers: [Profile],
         user(slug: String): Profile,
         me: PrivateUserData,
-        reviews(slug: String): [Review]
+        reviews(slug: String): [Review],
+        reports: [Report]
     }
 
     type Mutation {

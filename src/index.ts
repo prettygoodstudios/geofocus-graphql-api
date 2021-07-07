@@ -16,6 +16,7 @@ import { SECRET } from "./config";
 import { generateTokens } from "./auth";
 import User from "./models/user";
 import * as cors from "cors";
+import { reports } from "./resolvers/reports";
 
 const main = async () => {
     const orm = await connection();
@@ -28,7 +29,8 @@ const main = async () => {
             topUsers,
             user,
             me,
-            reviews
+            reviews,
+            reports
         },
         Mutation: {
             login,
