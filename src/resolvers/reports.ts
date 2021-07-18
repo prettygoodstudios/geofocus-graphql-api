@@ -28,7 +28,7 @@ export const reports: StandardResolver<Promise<Report[]>> = async (parent, args,
 
 
 export const report: ReportResolver = async (parent, {message, location, photo, review}, {orm, req}, info) => {
-    if (await checkAdmin(req.userId, orm)) {
+    if (req.userId) {
         const report = new Report();
         report.created_at = new Date();
         report.updated_at = new Date();
