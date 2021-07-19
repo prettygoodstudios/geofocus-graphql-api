@@ -70,7 +70,8 @@ const typeDefs = gql`
         message: String,
         location: Location,
         photo: Photo,
-        review: Review
+        review: Review,
+        slug: String
     }
 
     type Query {

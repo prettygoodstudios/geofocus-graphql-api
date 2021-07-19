@@ -49,12 +49,8 @@ export const report: ReportResolver = async (parent, {message, location, photo, 
             .manager
             .getRepository(Review)
             .findOne({
-                relations: ["location", "user"],
-                where: {
-                    slug: review
-                }
+                slug: review
             }))!;
-
         const errors = await validate(report);
         if (errors.length > 0) {
             throw new ApolloError(`The following failed validation ${errors[0].property}`, REPORT_ERROR);
