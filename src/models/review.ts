@@ -29,15 +29,14 @@ export default class Review {
     @Column()
     updated_at: Date;
 
+    @Column()
+    slug: string;
+
     @ManyToOne(() => Location, location => location.id)
     @JoinColumn({name: "location_id"})
-    location: Location 
+    location: Location;
 
     @ManyToOne(() => User, user => user.id)
     @JoinColumn({name: "user_id"})
-    user: User 
-
-    slug(){
-        return slugify(`${this.message.slice(0, 10)} ${this.user.slug} ${this.location.slug}`, {strict: true, lower: true});
-    } 
+    user: User;
 }

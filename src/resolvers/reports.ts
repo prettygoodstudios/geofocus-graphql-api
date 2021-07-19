@@ -48,9 +48,12 @@ export const report: ReportResolver = async (parent, {message, location, photo, 
         report.review = (await orm
             .manager
             .getRepository(Review)
-            .find({
-                relations: ["location", "user"]
-            })).filter((r) => r.slug() === review)[0];
+            .findOne({
+                relations: ["location", "user"],
+                where: {
+                    slug: review
+                }
+            }))!;
 
         const errors = await validate(report);
         if (errors.length > 0) {
