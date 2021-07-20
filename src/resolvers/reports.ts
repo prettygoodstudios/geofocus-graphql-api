@@ -20,7 +20,7 @@ export const reports: StandardResolver<Promise<Report[]>> = async (parent, args,
             .manager
             .getRepository(Report)
             .find({
-                relations: ["location", "location.user", "review", "review.user", "photo", "photo.user"]
+                relations: ["location", "location.user", "review", "review.user", "photo", "photo.user", "review.location"]
             }); 
     }
     throw new ApolloError("You are not authorized to access this data", REPORT_ERROR);
@@ -63,6 +63,20 @@ export const report: ReportResolver = async (parent, {message, location, photo, 
                 .save(report);
         }
         throw new ApolloError("There is no selected entity for this report.", REPORT_ERROR);
+    }
+    throw new ApolloError("You are not authorized to perform this action.", REPORT_ERROR);
+}
+
+export const deleteReport: StandardResolver<Promise<number|null|undefined>> = async (parent, {id}, {orm, req}, info) => {
+    if (req.userId) {
+        return (await
+            orm
+            .manager
+            .getRepository(Report)
+            .delete({
+                id
+            }))
+            .affected;
     }
     throw new ApolloError("You are not authorized to perform this action.", REPORT_ERROR);
 }

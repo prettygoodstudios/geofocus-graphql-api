@@ -16,7 +16,7 @@ import { SECRET } from "./config";
 import { generateTokens } from "./auth";
 import User from "./models/user";
 import * as cors from "cors";
-import { report, reports } from "./resolvers/reports";
+import { report, reports, deleteReport } from "./resolvers/reports";
 
 const main = async () => {
     const orm = await connection();
@@ -43,7 +43,8 @@ const main = async () => {
             review,
             deleteReview,
             deletePhoto,
-            report
+            report,
+            deleteReport
         }
     }
 
