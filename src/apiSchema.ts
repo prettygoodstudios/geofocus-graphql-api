@@ -87,14 +87,14 @@ const typeDefs = gql`
     }
 
     type Mutation {
-        login(email: String, password: String): Profile,
+        login(email: String, password: String): PrivateUserData,
         logout: Boolean,
         createLocation(title: String, address: String, city: String, state: String, country: String): Location
         updateLocation(title: String, address: String, city: String, state: String, country: String, slug: String): Location
         deleteLocation(slug: String): Int
         upload(file: Upload!, width: Float, height: Float, offsetX: Float, offsetY: Float, caption: String, location: String, zoom: Float): Photo,
         deletePhoto(slug: String): Int
-        register(email: String, password: String, display: String, bio: String, file: Upload, width: Float, height: Float, offsetX: Float, offsetY: Float, zoom: Float): Profile
+        register(email: String, password: String, display: String, bio: String, file: Upload, width: Float, height: Float, offsetX: Float, offsetY: Float, zoom: Float): PrivateUserData
         review(location: String, message: String, score: Float, user: String): Review
         deleteReview(location: String, user: String): Int
         report(message: String, location: String, review: String, photo: String): Report,
