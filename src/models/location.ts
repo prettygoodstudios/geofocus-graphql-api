@@ -1,8 +1,11 @@
-import { Length, IsNotEmpty } from "class-validator";
+import { Length, IsNotEmpty, Max } from "class-validator";
 import {Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToOne} from "typeorm";
 import Photo from "./photo";
 import Review from "./review";
 import User from "./user";
+
+const notBlankMessage = (field: string) => `${field} must not be blank.`;
+const rangeMessage = (field: string, min: number = 2, max: number = 255) => `${field} must have a character length between ${min} and ${max} characters.`;
 
 @Entity("locations")
 export default class Location {
@@ -16,17 +19,27 @@ export default class Location {
     title: string;
 
     @Column()
-    @Length(2, 255)
-    @IsNotEmpty()
+    @Length(2, 255, {
+        message: rangeMessage('City')
+    })
+    @IsNotEmpty({
+        message: notBlankMessage('City')
+    })
     city: string;
 
     @Column()
-    @Length(2, 255)
-    @IsNotEmpty()
+    @Length(2, 255, {
+        message: rangeMessage('State')
+    })
+    @IsNotEmpty({
+        message: notBlankMessage('State')
+    })
     state: string;
 
     @Column()
-    @Length(2, 255)
+    @Length(2, 255, {
+        message: rangeMessage('Country')
+    })
     country: string;
 
     @Column()
@@ -38,8 +51,12 @@ export default class Location {
     updated_at: Date;
 
     @Column()
-    @Length(2, 255)
-    @IsNotEmpty()
+    @Length(2, 255, {
+        message: rangeMessage('Address')
+    })
+    @IsNotEmpty({
+        message: notBlankMessage('Address')
+    })
     address: string;
 
     @Column()

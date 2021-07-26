@@ -1,11 +1,10 @@
 import { LoginResolver, RegisterResolver, StandardResolver } from "../types";
-import {compare, hash} from "bcrypt";
+import { compare, hash } from "bcrypt";
 import User from "../models/user";
 import { clearTokens, generateTokens } from "../auth";
 import { ApolloError } from "apollo-server-errors";
 import { buildProfileAWSPath, SALT } from "../config";
-import { validate } from "class-validator";
-import { humanReadableList } from "../helpers";
+import { validateFields } from "../helpers";
 import slugify from "slugify";
 import { uploadToS3 } from "../uploader";
 
@@ -61,13 +60,7 @@ export const register: RegisterResolver = async (parent, {email, password, displ
     user.created_at = new Date();
     user.updated_at = new Date();
 
-    const errors = await validate(user);
-
-    const fileError = file ? [] : ["profile picture"];
-
-    if (errors.length > 0 || fileError.length > 0) {
-        throw new ApolloError(`The following failed validation ${humanReadableList(errors.map(e => e.property).concat(fileError))}.`, REGISTER_ERROR);
-    }
+    await validateFields(user);
 
     try {
         await orm

@@ -2,9 +2,8 @@ import { buildPhotoAWSPath } from "../config";
 import Photo from "../models/photo";
 import { PublicSlugResolver, StandardResolver } from "../types";
 import slugify from "slugify";
-import { validate } from "class-validator";
 import { ApolloError } from "apollo-server-errors";
-import { humanReadableList } from "../helpers";
+import { validateFields } from "../helpers";
 import { AuthError } from "./auth";
 import Location from  "../models/location";
 import User from "../models/user";
@@ -68,22 +67,19 @@ export const upload: StandardResolver<Promise<Photo|null>> = async (parent, {fil
         photo.slug = slugify(photo.caption+photo.location.title, {
             strict: true
         });
-        const errors = await validate(photo);
+      
+        await validateFields(photo);
 
-        if (errors.length === 0){
-            await orm 
-                .manager 
-                .getRepository(Photo)
-                .save(photo);            
-            photo.img_url = await uploadToS3(file, buildPhotoAWSPath, photo.id);
-            await orm 
-                .manager 
-                .getRepository(Photo)
-                .save(photo);
-            return photo;
-        } else {
-            throw new ApolloError(`The following failed validation ${humanReadableList(errors.map(e => e.property))}`, PHOTO_ERROR);
-        }
+        await orm 
+            .manager 
+            .getRepository(Photo)
+            .save(photo);            
+        photo.img_url = await uploadToS3(file, buildPhotoAWSPath, photo.id);
+        await orm 
+            .manager 
+            .getRepository(Photo)
+            .save(photo);
+        return photo;
     }
     throw AuthError("You must be authenticated to upload an photo.");
 }

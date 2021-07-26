@@ -6,7 +6,7 @@ import Review from "../models/review";
 import User from "../models/user";
 import Location from "../models/location";
 import { ReportResolver, StandardResolver } from "../types";
-import { validate } from "class-validator";
+import { validateFields } from "../helpers";
 
 const REPORT_ERROR = 'REPORT_ERROR';
 
@@ -51,10 +51,8 @@ export const report: ReportResolver = async (parent, {message, location, photo, 
             .findOne({
                 slug: review
             }))!;
-        const errors = await validate(report);
-        if (errors.length > 0) {
-            throw new ApolloError(`The following failed validation ${errors[0].property}`, REPORT_ERROR);
-        }
+        
+        validateFields(report);
 
         if (report.review || report.photo || report.location) {
             return await orm
@@ -68,7 +66,7 @@ export const report: ReportResolver = async (parent, {message, location, photo, 
 }
 
 export const deleteReport: StandardResolver<Promise<number|null|undefined>> = async (parent, {id}, {orm, req}, info) => {
-    if (req.userId) {
+    if (checkAdmin(req.userId, orm)) {
         return (await
             orm
             .manager

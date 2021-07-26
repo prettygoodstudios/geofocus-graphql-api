@@ -5,7 +5,7 @@ import User from "../models/user";
 import { ApolloError } from "apollo-server-express";
 import { AuthError } from "./auth";
 import { validate } from "class-validator";
-import { humanReadableList } from "../helpers";
+import { humanReadableList, validateFields } from "../helpers";
 
 
 
@@ -66,11 +66,7 @@ export const review: ReviewResolver = async (parent, {location, message, score, 
         review.created_at = new Date();
         review.updated_at = new Date();
 
-        const errors = await validate(review);
-
-        if (errors.length > 0) {
-            throw new ApolloError(`The following fields failed validation ${humanReadableList(errors.map(e => e.property))}.`);
-        }
+        await validateFields(review);
 
         await orm
             .manager 

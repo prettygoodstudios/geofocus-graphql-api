@@ -2,11 +2,11 @@ import { geocoder } from "../config";
 import Location from "../models/location";
 import { LocationResolver, PublicSlugResolver, StandardResolver } from "../types";
 import slugify from "slugify";
-import { validate } from "class-validator";
 import { ApolloError } from "apollo-server";
-import { humanReadableList } from "../helpers";
+import { validateFields } from "../helpers";
 import { AuthError } from "./auth";
 import { Connection } from "typeorm";
+import User from "../models/user";
 
 export const locations: StandardResolver<Promise<Location[]>> = async (parent, args, {orm}) => {  
     return await orm
@@ -71,11 +71,7 @@ const saveLocation = async (location: Location, orm: Connection, update: boolean
         });
     }
 
-    const errors = await validate(location);
-    const errorMessage = `The following inputs failed validation ${humanReadableList(errors.map(e => e.property))}.`;
-    if (errors.length > 0){
-        throw new ApolloError(errorMessage, LOCATION_VALIDATION);
-    }
+    await validateFields(location);
 
     await orm 
         .manager 
@@ -107,7 +103,11 @@ export const updateLocation: LocationResolver = async (parent, {title, address, 
                 },
                 relations: ["user", "reviews", "reviews.user", "photos", "photos.user"]
             });
-        if(location.user?.role !== 'admin' && location.user.id !== req.userId){
+        const user = await orm
+            .manager
+            .getRepository(User)
+            .findOneOrFail({id: req.userId});
+        if(user.role !== 'admin' && location.user.id !== req.userId){
             AuthError("You don't have access to this location.");
             return null;
         }
