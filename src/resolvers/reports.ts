@@ -52,7 +52,7 @@ export const report: ReportResolver = async (parent, {message, location, photo, 
                 slug: review
             }))!;
         
-        validateFields(report);
+        await validateFields(report);
 
         if (report.review || report.photo || report.location) {
             return await orm
