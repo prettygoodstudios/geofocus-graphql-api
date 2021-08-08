@@ -4,4 +4,4 @@ package-lock.json
 *.js
 !*.json
 db*
-config.ts
+.env
