@@ -7,7 +7,7 @@ import {locations, location, createLocation, updateLocation, deleteLocation} fro
 import { photo, upload, deletePhoto } from "./resolvers/photos";
 import {topUsers, user, me} from "./resolvers/users";
 import { ApolloContext } from "./types";
-import { login, logout, register } from "./resolvers/auth";
+import { login, logout, register, editProfile } from "./resolvers/auth";
 import { review, reviews, deleteReview } from "./resolvers/reviews";
 import * as express from "express";
 import * as cookieParser from "cookie-parser";
@@ -44,7 +44,8 @@ const main = async () => {
             deleteReview,
             deletePhoto,
             report,
-            deleteReport
+            deleteReport,
+            editProfile
         }
     }
 

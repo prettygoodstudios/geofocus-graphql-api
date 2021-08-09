@@ -95,10 +95,11 @@ const typeDefs = gql`
         upload(file: Upload!, width: Float, height: Float, offsetX: Float, offsetY: Float, caption: String, location: String, zoom: Float): Photo,
         deletePhoto(slug: String): Int
         register(email: String, password: String, display: String, bio: String, file: Upload, width: Float, height: Float, offsetX: Float, offsetY: Float, zoom: Float): PrivateUserData
+        editProfile(slug: String, email: String, password: String, display: String, bio: String, file: Upload, width: Float, height: Float, offsetX: Float, offsetY: Float, zoom: Float): PrivateUserData,
         review(location: String, message: String, score: Float, user: String): Review
         deleteReview(location: String, user: String): Int
         report(message: String, location: String, review: String, photo: String): Report,
-        deleteReport(id: Int): Int
+        deleteReport(id: Int): Int,
     }
 `;
 
