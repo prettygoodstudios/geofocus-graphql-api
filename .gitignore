@@ -3,5 +3,4 @@ dist
 package-lock.json
 *.js
 !*.json
-db*
 .env
