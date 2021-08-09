@@ -12,7 +12,7 @@ export type ReportResolver = (parent: any, {location, message, photo, review} : 
 export type LoginResolver = (parent: any, {email, password} : {email: string, password: string}, context: ApolloContext, info: any) => Promise<User|null>;
 export type LocationResolver = (parent: any, {title, address, city, state, country, slug}: {title: string, address: string, city: string, state: string, country: string, slug?: string}, context: ApolloContext, info: any) => Promise<Location|null>;
 export type RegisterResolver = (parent: any, {email, password} : ProfileInfo, context: ApolloContext, info: any) => Promise<User|null>;
-export type UpdateProfileResolver = (parent: any, {email, password} : ProfileInfo & { slug: string }, context: ApolloContext, info: any) => Promise<User|null>;
+export type UpdateProfileResolver = (parent: any, {email, password} : ProfileInfo, context: ApolloContext, info: any) => Promise<User|null>;
 export type ApolloContext = {
     orm: Connection,
     req: any,

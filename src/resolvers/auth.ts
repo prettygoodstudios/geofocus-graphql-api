@@ -90,11 +90,11 @@ export const register: RegisterResolver = async (parent, data, {orm, res}) => {
     return user;
 }
 
-export const editProfile: UpdateProfileResolver = async (parent, data, {orm}) => {
+export const editProfile: UpdateProfileResolver = async (parent, data, {orm, req}) => {
     const user = await updateUser(await orm 
         .getRepository(User)
         .findOneOrFail({
-            slug: data.slug
+            id: req.userId
         }),
         data,
         orm);
