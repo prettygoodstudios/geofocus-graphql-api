@@ -47,7 +47,7 @@ const updateUser = async (user: User, {email, password, display, bio, file, zoom
     if((!password || password.length < 6) && !user.encrypted_password){
         throw new ApolloError("Must provide a password that is atleast six characters in length.", REGISTER_ERROR);
     }
-    user.encrypted_password = await hash(password, SALT()) || user.encrypted_password;
+    user.encrypted_password = password ? await hash(password, SALT()): user.encrypted_password;
     user.display = display || user.display;
     user.bio = bio || user.bio;
     user.zoom = zoom || user.zoom;

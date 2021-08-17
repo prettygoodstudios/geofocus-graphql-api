@@ -4,8 +4,7 @@ import { PublicSlugResolver, ReviewResolver, StandardResolver } from "../types";
 import User from "../models/user";
 import { ApolloError } from "apollo-server-express";
 import { AuthError } from "./auth";
-import { validate } from "class-validator";
-import { humanReadableList, validateFields } from "../helpers";
+import { validateFields } from "../helpers";
 
 
 
