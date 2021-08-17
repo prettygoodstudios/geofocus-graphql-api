@@ -15,10 +15,8 @@ export const humanReadableList = (list: string[]): string => {
 export const validateFields = async (ormObject: Object) => {
     const errors = await validate(ormObject);
     if (errors.length > 0){
-        const thumbnailProps = new Set<string>();
-        const imageProps = new Set<string>();
-        ['offsetX', 'offsetY', 'zoom'].forEach(p => thumbnailProps.add(p));
-        ['width', 'height', 'profile_img', 'img_url'].forEach(p => imageProps.add(p));
+        const thumbnailProps = new Set<string>(['offsetX', 'offsetY', 'zoom']);
+        const imageProps = new Set<string>(['width', 'height', 'profile_img', 'img_url']);
 
         const needsImage = errors.filter(({property}) => imageProps.has(property)).length > 0 ;
         const needsThumbnail = errors.filter(({property}) => thumbnailProps.has(property)).length > 0;
