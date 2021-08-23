@@ -43,7 +43,7 @@ export const login: LoginResolver = async (parent, {email, password}, {orm, res}
 }
 
 const updateUser = async (user: User, {email, password, display, bio, file, zoom, width, height, offsetX, offsetY}: ProfileInfo, orm: Connection): Promise<User> => {
-    user.email = email;
+    user.email = user.email ?? email;
     if((!password || password.length < 6) && !user.encrypted_password){
         throw new ApolloError("Must provide a password that is atleast six characters in length.", REGISTER_ERROR);
     }
@@ -53,8 +53,8 @@ const updateUser = async (user: User, {email, password, display, bio, file, zoom
     user.zoom = zoom || user.zoom;
     user.width = Math.floor(width) || user.width;
     user.height = Math.floor(height) || user.height;
-    user.offsetX = Math.floor(offsetX) || user.offsetX;
-    user.offsetY = Math.floor(offsetY) || user.offsetY;
+    user.offsetX = offsetX !== undefined ? Math.floor(offsetX) : user.offsetX;
+    user.offsetY = offsetY !== undefined ? Math.floor(offsetY) : user.offsetY;
     user.slug = user.slug || (user.display ? slugify(user.display) : '');
     user.created_at = user.created_at || new Date();
     user.updated_at = new Date();

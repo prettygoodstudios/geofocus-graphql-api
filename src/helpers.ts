@@ -27,7 +27,7 @@ export const validateFields = async (ormObject: Object) => {
         errors.forEach(({property, constraints}) => {
             errorMap[property] = Object.values(constraints!)[0];
         });
-        
+
         if (needsImage) {
             errorProps.push('image');
             errorMap['image'] = 'You must select an image.';
