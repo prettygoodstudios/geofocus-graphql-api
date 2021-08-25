@@ -8,7 +8,7 @@
     "start": "npx nodemon dist/index.js",
     "debug": "node dist/index.js",
     "build": "tsc -w",
-    "shell": "node -r ./src/shell.js",
+    "shell": "node -e 'const {models, connection} = require(\"./src/shell.js\"); let orm; connection().then(d => { orm = d })' -i",
     "preinstall": "npx npm-force-resolutions"
   },
   "keywords": [],
