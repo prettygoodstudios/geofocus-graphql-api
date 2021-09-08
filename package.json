@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx nodemon dist/index.js",
     "debug": "node dist/index.js",
-    "docker": "docker run --publish 8000:4000 geofocus-graphql",
+    "docker": "docker run --rm --publish 4000:4000 geofocus-graphql",
     "build": "tsc -w",
     "shell": "node -e 'const {models, connection} = require(\"./src/shell.js\"); let orm; connection().then(d => { orm = d })' -i",
     "preinstall": "npx npm-force-resolutions"
